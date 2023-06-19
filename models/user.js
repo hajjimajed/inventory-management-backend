@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../util/database');
 
+const Inventory = require('./inventory');
 
 const User = sequelize.define('User', {
     email: {
@@ -15,7 +16,21 @@ const User = sequelize.define('User', {
     password: {
         type: Sequelize.STRING,
         allowNull: false
+    },
+    profileImg: {
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    about: {
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    address: {
+        type: Sequelize.STRING,
+        allowNull: true
     }
 })
+
+User.hasOne(Inventory, { onDelete: 'CASCADE' });
 
 module.exports = User;

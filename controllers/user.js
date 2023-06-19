@@ -2,17 +2,23 @@ const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+const Inventory = require('../models/inventory');
+
 exports.signUp = (req, res, next) => {
     const { email, name, password } = req.body;
 
     bcrypt.hash(password, 12)
         .then(hashedPassword => {
-            const user = new User({
+            return User.create({
                 email: email,
                 name: name,
-                password: hashedPassword
-            })
-            return user.save();
+                password: hashedPassword,
+                Inventory: { // Create an inventory for the user
+                    name: 'Default Inventory',
+                    description: 'Default inventory for the user',
+                    quantity: 0
+                }
+            }, { include: [Inventory] }); // Include the associated Inventory model
         })
         .then(result => {
             res.status(201).json({ message: 'user created', userId: result._id })
@@ -56,7 +62,7 @@ exports.signIn = (req, res, next) => {
                 { expiresIn: '24h' }
             )
 
-            res.status(201).json({ token: token, message: loadedUser.email, userId: loadedUser.id })
+            res.status(201).json({ token: token, user: loadedUser, userId: loadedUser.id })
         })
         .catch(err => {
             if (!err.statusCode) {
@@ -66,22 +72,22 @@ exports.signIn = (req, res, next) => {
         })
 }
 
-exports.getUserData = (req, res, next) => {
-    const userId = req.userId;
+// exports.getUserData = (req, res, next) => {
+//     const userId = req.userId;
 
-    User.findByPk(userId)
-        .then(user => {
-            if (!user) {
-                const error = new Error('User not found');
-                error.statusCode = 404;
-                throw error;
-            }
-            res.status(200).json({ message: 'user data received', user: user })
-        })
-        .catch(err => {
-            if (!err.statusCode) {
-                err.statusCode = 500;
-            }
-            next(err);
-        });
-}
+//     User.findByPk(userId)
+//         .then(user => {
+//             if (!user) {
+//                 const error = new Error('User not found');
+//                 error.statusCode = 404;
+//                 throw error;
+//             }
+//             res.status(200).json({ message: 'user data received', user: user })
+//         })
+//         .catch(err => {
+//             if (!err.statusCode) {
+//                 err.statusCode = 500;
+//             }
+//             next(err);
+//         });
+// }
