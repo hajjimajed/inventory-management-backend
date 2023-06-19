@@ -1,9 +1,9 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../util/database');
 
-const Category = require('./category');
+const Product = require('./product');
 
-const Inventory = sequelize.define('Inventory', {
+const Category = sequelize.define('Category', {
     name: {
         type: Sequelize.STRING,
         allowNull: false
@@ -19,6 +19,6 @@ const Inventory = sequelize.define('Inventory', {
     },
 })
 
-Inventory.hasMany(Category, { onDelete: 'CASCADE' });
+Category.hasMany(Product, { onDelete: 'CASCADE' });
 
-module.exports = Inventory;
+module.exports = Category;
