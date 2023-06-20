@@ -17,6 +17,8 @@ const Category = sequelize.define('Category', {
         allowNull: false,
         defaultValue: 0
     },
+}, {
+    timestamps: true // Enable automatic createdAt and updatedAt fields
 })
 
 Category.hasMany(Product, { onDelete: 'CASCADE' });

@@ -28,6 +28,8 @@ const Product = sequelize.define('Product', {
         allowNull: false,
         defaultValue: 0
     },
+}, {
+    timestamps: true // Enable automatic createdAt and updatedAt fields
 })
 
 module.exports = Product;

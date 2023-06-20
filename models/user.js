@@ -29,6 +29,8 @@ const User = sequelize.define('User', {
         type: Sequelize.STRING,
         allowNull: true
     }
+}, {
+    timestamps: true // Enable automatic createdAt and updatedAt fields
 })
 
 User.hasOne(Inventory, { onDelete: 'CASCADE' });

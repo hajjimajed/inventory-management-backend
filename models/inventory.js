@@ -17,6 +17,8 @@ const Inventory = sequelize.define('Inventory', {
         allowNull: false,
         defaultValue: 0
     },
+}, {
+    timestamps: true // Enable automatic createdAt and updatedAt fields
 })
 
 Inventory.hasMany(Category, { onDelete: 'CASCADE' });
