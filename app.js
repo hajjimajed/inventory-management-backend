@@ -7,6 +7,7 @@ const bodyparser = require('body-parser')
 app.use(bodyparser.json());
 
 const userRoutes = require('./routes/user');
+const inventoryRoutes = require('./routes/inventory');
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -16,6 +17,7 @@ app.use((req, res, next) => {
 })
 
 app.use('/users', userRoutes);
+app.use('/inventory', inventoryRoutes);
 
 sequelize.authenticate()
     .then(() => {

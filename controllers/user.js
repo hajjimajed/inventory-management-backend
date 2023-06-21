@@ -3,8 +3,6 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const Inventory = require('../models/inventory');
-const Category = require('../models/category');
-const Product = require('../models/product');
 
 exports.signUp = (req, res, next) => {
     const { email, name, password } = req.body;
@@ -75,62 +73,4 @@ exports.signIn = (req, res, next) => {
 }
 
 
-
-exports.createCategory = (req, res, next) => {
-    const { name, description } = req.body;
-
-    Category.create({
-        name: name,
-        description: description,
-        quantity: 0,
-        InventoryId: 1
-    })
-        .then(category => {
-            // Increment the inventory quantity by 1
-            return Inventory.findByPk(1);
-        })
-        .then(inventory => {
-            inventory.quantity += 1;
-            return inventory.save();
-        })
-        .then(() => {
-            res.status(201).json({ message: 'Category created and inventory quantity incremented' });
-        })
-        .catch(err => {
-            if (!err.statusCode) {
-                err.statusCode = 500;
-            }
-            next(err);
-        });
-}
-
-
-exports.createProduct = (req, res, next) => {
-    const { name, description, quantity, price } = req.body;
-
-    Product.create({
-        name: name,
-        description: description,
-        quantity: quantity,
-        price: price,
-        CategoryId: 1
-    })
-
-        .then(response => {
-            return Category.findByPk(1);
-        })
-        .then(category => {
-            category.quantity += 1;
-            return category.save();
-        })
-        .then(() => {
-            res.status(201).json({ message: 'product created' });
-        })
-        .catch(err => {
-            if (!err.statusCode) {
-                err.statusCode = 500;
-            }
-            next(err);
-        });
-}
 
