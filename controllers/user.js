@@ -13,7 +13,8 @@ exports.signUp = (req, res, next) => {
                 email: email,
                 name: name,
                 password: hashedPassword,
-                Inventory: { // Create an inventory for the user
+                profileImg: '/images/avatar.jpg',
+                Inventory: {
                     name: 'Default Inventory',
                     description: 'Default inventory for the user',
                     quantity: 0
@@ -71,6 +72,40 @@ exports.signIn = (req, res, next) => {
             next(err);
         })
 }
+
+exports.editUser = (req, res, next) => {
+    const { userId } = req;
+    const { email, name, about, address } = req.body;
+
+    User.findByPk(userId)
+        .then(user => {
+            if (!user) {
+                const error = new Error('user not found');
+                error.statusCode = 404;
+                throw error;
+            }
+
+            user.email = email || user.email;
+            user.name = name || user.name;
+            user.about = about || user.about;
+            user.address = address || user.address;
+
+            if (req.file) {
+                user.profileImg = req.file.path;
+            }
+
+            return user.save();
+        })
+        .then(updatedUser => {
+            res.status(200).json({ message: 'user data updated', user: updatedUser });
+        })
+        .catch(err => {
+            if (!err.statusCode) {
+                err.statusCode = 500;
+            }
+            next(err);
+        });
+};
 
 
 
