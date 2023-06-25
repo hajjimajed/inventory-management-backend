@@ -1,6 +1,6 @@
 const Inventory = require('../models/inventory');
 const Category = require('../models/category');
-
+const Product = require('../models/product');
 
 exports.getCategory = (req, res, next) => {
     const { userId } = req;
@@ -57,6 +57,13 @@ exports.createCategory = (req, res, next) => {
 exports.createProduct = (req, res, next) => {
     const { name, description, quantity, price, categoryId } = req.body;
     const { userId } = req;
+    let image;
+
+    if (req.file) {
+        image = req.file.path;
+    } else {
+        image = '/images/product.png'
+    }
 
     Inventory.findOne({ where: { UserId: userId } })
         .then(inventory => {
@@ -69,6 +76,7 @@ exports.createProduct = (req, res, next) => {
             return Product.create({
                 name: name,
                 description: description,
+                productImg: image,
                 quantity: quantity,
                 price: price,
                 CategoryId: category.id
@@ -91,5 +99,25 @@ exports.createProduct = (req, res, next) => {
             next(err);
         });
 
+}
+
+exports.getAllProducts = (req, res, next) => {
+    const { userId } = req;
+
+    Inventory.findOne({ where: { UserId: userId } })
+        .then(inventory => {
+            return Category.findAll({ where: { InventoryId: inventory.id } })
+        })
+        .then(categories => {
+            const categoryIds = categories.map(category => category.id);
+            return Product.findAll({ where: { CategoryId: categoryIds } });
+        })
+        .then(products => {
+            res.json(products);
+        })
+        .catch(err => {
+            // handle any errors that occur
+            next(err);
+        });
 }
 
