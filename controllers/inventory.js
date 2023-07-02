@@ -102,7 +102,7 @@ exports.createProduct = (req, res, next) => {
 }
 
 exports.getAllProducts = (req, res, next) => {
-    const { userId } = req;
+    const userId = 1;
 
     Inventory.findOne({ where: { UserId: userId } })
         .then(inventory => {
